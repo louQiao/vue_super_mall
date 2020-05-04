@@ -3,12 +3,6 @@
     <nav-bar class="home-nav">
       <div slot="nav-center">购物街</div>
     </nav-bar>
-    <tab-control class="tab-control tab-control-1" 
-                  :titles='["流行","新款","精选"]' 
-                  @changeTab="handleTabChange"
-                  v-show="isFixedTabControl"
-                  ref="tabControl1"
-                   />
     <scroll class="content" ref="scroll" :probe-type="3" :pull-up-load="true" @scroll="scrollContent" @pullUp="loadMore" >
       <home-swiper :banners="banners" @swiperImgLoad="swiperImgLoad" />
       <recommend :recommends="recommends" />
@@ -18,6 +12,12 @@
       <goods-list :goods="goods[currentType].list" />
     </scroll>
     <back-top @click.native="backTop" v-show="isShowBackTop" />
+    <tab-control class="tab-control tab-control-1" 
+                  :titles='["流行","新款","精选"]' 
+                  @changeTab="handleTabChange"
+                  v-show="isFixedTabControl"
+                  ref="tabControl1"
+                   />
   </div>
 </template>
 
@@ -34,8 +34,10 @@ import Feature from "./childComps/Feature"
 
 import { getHomeMultidata,getHomeGoodsList } from "network/home"
 import {debounce} from "@/common/util.js"
+import { imgLoadMixin } from "@/common/mixin"
 export default {
   name: 'Home',
+  mixins:[imgLoadMixin],
   data() {
     return {
       banners:[],
@@ -59,7 +61,8 @@ export default {
       tabControlOffsetTop:0,
       isFixedTabControl:false,
       tabControlCurrent:0,
-      scrollY:0
+      scrollY:0,
+      imgLoadListener:null
     };
   },
   components:{
@@ -81,12 +84,7 @@ export default {
     this.getGoodsList("sell")
   },
   mounted(){
-    //监听图片加载是否完成
-    let refresh = debounce(this.$refs.scroll.refresh,10)
-    this.$bus.$on("imageLoad",() => {
-      refresh("aaa","bbb")
-      //console.log("-------------")
-    })
+    console.log("mounted")
     
   },
   destroyed() {
@@ -100,6 +98,7 @@ export default {
   deactivated() {
     this.scrollY = this.$refs.scroll.getScrollY()
     //console.log(this.scrollY)
+    this.$bus.$off("imageLoad",this.imgLoadListener)
   },
   methods: {
     //防抖
@@ -179,12 +178,14 @@ export default {
 
 <style scoped>
 #home {
+  position:relative;
   height:100vh;
-  padding-top:44px;
+  /*padding-top:44px;*/
 }
 .home-nav {
   background-color:var(--color-tint);
   color:#fff;
+  height:44px;
   position:fixed;
   top:0;
   left:0;
@@ -200,8 +201,8 @@ export default {
   background:#fff;
 }
 .tab-control {
-  position:sticky;
-  top:44px;
+  /*position:sticky;
+  top:44px;*/
 }
 .tab-control-1 {
   display:fixed;

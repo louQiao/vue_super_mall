@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item" @click="goToDetail">
-      <img :src="itemData.show.img" @load="imgLoad" />
+      <img :src="itemData.show ? itemData.show.img : itemData.image" @load="imgLoad" />
       <div class="goods-info">
         <p>{{itemData.title}}</p>
         <span class="price">{{itemData.price}}</span>
@@ -29,7 +29,7 @@ export default {
       this.$bus.$emit("imageLoad")
     },
     goToDetail(){
-      this.$router.push("/detail"+itemData.iid)
+      this.$router.push("/detail/"+this.itemData.iid)
     }
   },
 };
