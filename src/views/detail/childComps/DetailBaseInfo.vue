@@ -27,9 +27,6 @@
 		  goods: {
 		    type: Object
       }
-    },
-    created(){
-      console.log(this.goods,"aa")
     }
 	}
 </script>

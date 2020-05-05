@@ -12,6 +12,7 @@
     </scroll>
     <back-top @click.native="backTop" v-show="isShowBackTop" />
     <detail-bottom-bar @addToCart="addToCart" />
+    
   </div>
 </template>
 
@@ -80,7 +81,7 @@ export default {
       this.offsetTopY.push(this.$refs.params.$el.offsetTop - 44)
       this.offsetTopY.push(this.$refs.comments.$el.offsetTop - 44)
       this.offsetTopY.push(this.$refs.goodsList.$el.offsetTop - 44)
-      console.log(this.offsetTopY)
+      //console.log(this.offsetTopY)
     },100)
   },
   destroyed() {
@@ -124,7 +125,7 @@ export default {
       let length = this.offsetTopY.length;
       for(let i=0;i<length;i++){
         if( i !== this.currentTheme &&((i<length-1 && positionY >= this.offsetTopY[i] && positionY < this.offsetTopY[i+1]) || (i==length-1 && positionY >= this.offsetTopY[i]))){
-            console.log(i)
+            //console.log(i)
             this.currentTheme = i;
             this.$refs.nav.currentIndex = i;
         }
@@ -133,7 +134,19 @@ export default {
       this.listenerScroll(position)
     },
     //加入购物车
-    
+    addToCart(){
+      let product = {}
+      product.image = this.banners[0]
+      product.title = this.goods.title
+      product.desc = this.goods.desc
+      product.newPrice = this.goods.realPrice
+      product.iid = this.iid
+
+      this.$store.dispatch("addToCart",product).then(res => {
+        this.$toast.show(res,1500)
+      })
+      this.$refs.scroll.refresh()
+    }
     
   },
 };
@@ -146,7 +159,12 @@ export default {
   z-index:1;
 }
 .detail-content {
-  height:calc(100% - 44px);
+  /*height:calc(100% - 44px - 58px);*/
+  position:absolute;
+  top:44px;
+  bottom:58px;
+  left:0;
+  right:0;
   background:#fff;
 }
 </style>
